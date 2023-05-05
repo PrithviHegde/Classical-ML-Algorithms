@@ -1,7 +1,6 @@
 from statistics import NormalDist
 import pandas as pd
 import numpy as np
-import cupy as cp
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis 
 import math,random,time
 import matplotlib.pyplot as plt
@@ -320,7 +319,7 @@ def cost(x, y, theta):
 
 def batch_gradient_descent(X,y,alpha=0.01,iter=100,cutoff=1e-6):
     costs = []
-    w = cp.zeros((len(X[0]),1))
+    w = np.zeros((len(X[0]),1))
     c = None
     for i in range(iter):
         w = w - (alpha/X.shape[0])*(X.T @ (sigmoid_fn(X @ w) - y))
@@ -333,7 +332,7 @@ def batch_gradient_descent(X,y,alpha=0.01,iter=100,cutoff=1e-6):
 
 def stochastic_gradient_descent(X,y,alpha=0.01,iter=100,cutoff=1e-6):
     costs = []
-    w = cp.zeros((len(X[0]),1))
+    w = np.zeros((len(X[0]),1))
     c = None
     for epoch in range(iter):
         ind = [i for i in range(X.shape[0])]
@@ -351,7 +350,7 @@ def stochastic_gradient_descent(X,y,alpha=0.01,iter=100,cutoff=1e-6):
             
 def minibatch_gradient_descent(X,y,batch_size,alpha=0.01,iter=100,cutoff=1e-6):
     costs = []
-    w = cp.zeros((len(X[0]),1))
+    w = np.zeros((len(X[0]),1))
     c = None
     for epoch in range(iter):
         ind = [i for i in range(X.shape[0])]
@@ -403,9 +402,9 @@ def LR1(df:pd.DataFrame, maxIter=1000, printdata = True):
         for i in range(len(testy[row])):
             testy[row][i] = max(testy[row][i],0)
     splitind = trainX.shape[0]
-    joined = cp.vstack((trainX,testX))
+    joined = np.vstack((trainX,testX))
     joined = (joined - joined.mean())/joined.std()
-    trainX,testX = cp.vsplit(joined,[splitind])
+    trainX,testX = np.vsplit(joined,[splitind])
     errs = []
     wpluscosts = dict()
     for lr in [0.01,0.001,0.0001]:
@@ -434,9 +433,9 @@ def LR1(df:pd.DataFrame, maxIter=1000, printdata = True):
                 result = sigmoid_fn(testX @ w)
 
                 result = [classify(i,k) for i in result]
-                result = cp.array(result).reshape(testy.shape)
+                result = np.array(result).reshape(testy.shape)
 
-                mcr = (cp.abs(result - testy)).mean()
+                mcr = (np.abs(result - testy)).mean()
                 testerrors.append(mcr)
                 if printdata:print("\t\t\tTesting accuracy using decision probability threshold of "+str(k)+" is : "+str(1-mcr))
 
@@ -454,9 +453,9 @@ def LR2(df:pd.DataFrame, maxIter=1000,printdata = True):
         for i in range(len(testy[row])):
             testy[row][i] = max(testy[row][i],0)
     splitind = trainX.shape[0]
-    joined = cp.vstack((trainX,testX))
+    joined = np.vstack((trainX,testX))
     joined = (joined - joined.mean())/joined.std()
-    trainX,testX = cp.vsplit(joined,[splitind])
+    trainX,testX = np.vsplit(joined,[splitind])
     errs = []
     wpluscosts = dict()
     for lr in [0.01,0.001,0.0001]:
@@ -485,9 +484,9 @@ def LR2(df:pd.DataFrame, maxIter=1000,printdata = True):
                 result = sigmoid_fn(testX @ w)
 
                 result = [classify(i,k) for i in result]
-                result = cp.array(result).reshape(testy.shape)
+                result = np.array(result).reshape(testy.shape)
 
-                mcr = (cp.abs(result - testy)).mean()
+                mcr = (np.abs(result - testy)).mean()
                 testerrors.append(mcr)
                 if printdata:print("\t\t\tTesting accuracy using decision probability threshold of "+str(k)+" is : "+str(1-mcr))
 
@@ -554,15 +553,15 @@ for i in range(9):
 
 print()
 print("Testing accuracy % over 10 random train test splits: ")
-comparativeStudyData = cp.array(comparativeStudyData)
+comparativeStudyData = np.array(comparativeStudyData)
 comparativeStudyData = 100*comparativeStudyData
-averages = cp.array(comparativeStudyData.mean(axis=0),dtype='<U5').reshape((1,7))
-variances = cp.array(comparativeStudyData.var(axis=0),dtype='<U5').reshape((1,7))
-comparativeStudyData = cp.array(comparativeStudyData,dtype='<U5')
-comparativeStudyData = cp.append(comparativeStudyData,averages,axis=0)
-comparativeStudyData = cp.append(comparativeStudyData,variances,axis=0)
-labels = cp.array(["Random Split "+str(i)+'  ' for i in range(1,comparativeStudyData.shape[0]-1)]+["Average "]+["Variance "]).reshape((comparativeStudyData.shape[0],1))
-comparativeStudyData = cp.concatenate((labels,comparativeStudyData),axis=1)
+averages = np.array(comparativeStudyData.mean(axis=0),dtype='<U5').reshape((1,7))
+variances = np.array(comparativeStudyData.var(axis=0),dtype='<U5').reshape((1,7))
+comparativeStudyData = np.array(comparativeStudyData,dtype='<U5')
+comparativeStudyData = np.append(comparativeStudyData,averages,axis=0)
+comparativeStudyData = np.append(comparativeStudyData,variances,axis=0)
+labels = np.array(["Random Split "+str(i)+'  ' for i in range(1,comparativeStudyData.shape[0]-1)]+["Average "]+["Variance "]).reshape((comparativeStudyData.shape[0],1))
+comparativeStudyData = np.concatenate((labels,comparativeStudyData),axis=1)
 comparativeStudyData = pd.DataFrame(comparativeStudyData, columns=["Split Number/Model  ","PM1","PM3","PM4","FLDM1","FLMD2","LR1","LR2"])
 
 print()
