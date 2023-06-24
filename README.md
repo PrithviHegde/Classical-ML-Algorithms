@@ -1,7 +1,7 @@
 # Classical-ML-Algorithms
 Implementation of various ML algorithms (Perceptron, FLD, Logistic Regression) on malignant tumors dataset. Done as a part of BITSF464 Machine Learning course.
 
-This project consists of 4 parts, A, B, C, and a comparitive study of the models implemented, in part D.
+This project consists of 4 parts, A, B, C, and a comparative study of the models implemented, in part D.
 The dataset attempts to classify tumors into malignant or benign, based on 32 diffrent parameters.
 
 Part A: Perceptron
